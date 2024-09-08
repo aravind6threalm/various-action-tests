@@ -35,7 +35,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
           TITLE: Team sync
           ASSIGNEES: monalisa,doctocat,hubot
-          LABELS: weekly sync,docs-team
+          LABELS: Scheduled-Issue
           BODY: |
             ### Agenda
 
