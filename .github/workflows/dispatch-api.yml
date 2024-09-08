@@ -1,0 +1,26 @@
+name: Create Issue
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: 'testing workflow dispatch api'
+        required: true
+        default: 'New Issue'
+      body:
+        description: 'Body of the issue'
+        required: true
+        default: 'Issue body goes here'
+
+jobs:
+  create-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create Issue
+        run: |
+          echo "Creating new issue..."
+          cat ISSUE_TEMPLATE.md | sed -e "s/{{title}}/${{ github.event.inputs.title }}/" | sed -e "s/{{body}}/${{ github.event.inputs.body }}/" > issue_body.md
+          gh issue create --title "${{ github.event.inputs.title }}" --body "$(cat issue_body.md)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
