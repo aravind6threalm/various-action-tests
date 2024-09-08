@@ -1,0 +1,40 @@
+name: Issue Events Workflow
+
+on:
+  issues:
+    types: 
+      - opened      # Trigger when an issue is created
+      - closed      # Trigger when an issue is closed
+
+jobs:
+  issue_events:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log Issue Event
+        run: |
+          echo "Issue Event: ${{ github.event.action }}"
+          echo "Issue Title: ${{ github.event.issue.title }}"
+          echo "Issue URL: ${{ github.event.issue.html_url }}"
+          echo "Issue State: ${{ github.event.issue.state }}"
+
+      - name: Add label when an issue is created
+        if: ${{ github.event.action == 'opened' }}
+        uses: octokit/request-action@v3
+        with:
+          route: POST /repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/labels
+          labels: 'new-issue'  # Correct syntax with colon
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub automatically provides this secret
+
+      - name: Add label when an issue is closed
+        if: ${{ github.event.action == 'closed' }}
+        uses: octokit/request-action@v3
+        with:
+          route: POST /repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/labels
+          labels: 'closed-issue'  # Correct syntax with colon
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
